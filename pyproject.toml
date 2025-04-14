@@ -1,0 +1,31 @@
+[project]
+name = "llm-yt-transcript"
+version = "0.1.0a"
+description = "A LLM plugin for YouTube transcripts as fragments"
+readme = "README.md"
+authors = [{name = "kj-9"}]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "llm>=0.24.2",
+    "yt-dlp>=2025.3.31",
+]
+
+[dependency-groups]
+dev = [
+    "marimo>=0.12.8",
+]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/kj-9/llm-yt-transcript"
+Changelog = "https://github.com/kj-9/llm-yt-transcript/releases"
+Issues = "https://github.com/kj-9/llm-yt-transcript/issues"
+CI = "https://github.com/kj-9/llm-yt-transcript/actions"
+
+[project.entry-points.llm]
+yt_transcript = "llm_yt_transcript"
