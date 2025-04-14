@@ -37,5 +37,5 @@ uv sync
 Now install the dependencies and test dependencies:
 
 ```
-uv pip install -e '.[test]'
+uv pip install -e '.'
 ```
