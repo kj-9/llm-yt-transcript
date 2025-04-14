@@ -15,8 +15,15 @@ llm install git+https://github.com/kj-9/llm-yt-transcript.git
 
 Use the `download_subtitles` function to download subtitles for a YouTube video:
 ```python
-llm -f hn:43615912 'summary with illustrative direct quotes'
+llm -f ytt:{youtube_video_url} 'summarize the transcript'
 ```
+
+by default, it will download the English subtitles. You can specify the language using the `lang` parameter before the `:`. 
+For example, to download Spanish subtitles, use:
+```python
+llm fragments show ytt:es:{youtube_video_url}
+```
+
 
 ## Development
 

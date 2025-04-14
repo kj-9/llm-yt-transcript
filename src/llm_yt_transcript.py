@@ -196,7 +196,7 @@ def yt_transcript_loader(argument: str) -> list[llm.Fragment]:
         List of Fragment objects, one for each tnrascript for a video
     """
 
-    if not argument.startswith(("http://", "https://")):
+    if argument.startswith(("http://", "https://")):
         sub_lang = "en"  # default
         video_url = argument
     else:
