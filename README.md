@@ -30,12 +30,11 @@ llm fragments show ytt:es:{youtube_video_url}
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
 
 ```
-cd llm-hacker-news
-uv sync
+cd llm-yt-transcript
+uv sync --all-groups
 ```
 
-Now install the dependencies and test dependencies:
-
+Run the following command to run the tests:
 ```
-uv pip install -e '.'
+uv run pytest
 ```

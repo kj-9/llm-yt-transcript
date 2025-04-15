@@ -8,10 +8,12 @@ app = marimo.App(width="columns")
 def _():
     import re
     import subprocess
-    from pathlib import Path
     import xml.etree.ElementTree as ET
     from dataclasses import dataclass
+    from pathlib import Path
+
     import llm
+
     return ET, Path, dataclass, llm, re, subprocess
 
 
@@ -19,35 +21,32 @@ def _():
 def _(TtmlParser, c, download_subtitles, llm, sab_lang, tempfile):
     @llm.hookimpl
     def register_fragment_loaders(register):
-
-        register('ytt', c)
-
+        register("ytt", c)
 
     def yt_transcript_loader(argument: str) -> list[llm.Fragment]:
-        '''
+        """
         Load Youtube transcript
 
         Args:
-            argument: 
+            argument:
 
         Returns:
             List of Fragment objects, one for each tnrascript for a video
-        '''
+        """
 
         if not argument.startswith(("http://", "https://")):
-            sub_lang = 'en' # default
+            sub_lang = "en"  # default
             video_url = argument
         else:
-            sub_lang, *rest = argument.split(':')
-            video_url = ':'.join(rest)        
-
+            sub_lang, *rest = argument.split(":")
+            video_url = ":".join(rest)
 
         with tempfile.TemporaryDirectory() as td:
-
-            out=download_subtitles(url=video_url, path=td, sub_format='ttml', sub_lang=sab_lang)
+            out = download_subtitles(
+                url=video_url, path=td, sub_format="ttml", sub_lang=sab_lang
+            )
 
             ttml = out.read_text()
-
 
         parser = TtmlParser(ttml)
 
@@ -90,6 +89,7 @@ def _(Path, subprocess):
             raise NameError(f"no such file: {out}")
 
         return out
+
     return (download_subtitles,)
 
 
@@ -237,6 +237,7 @@ def _(ET, dataclass, re):
                 return None
             else:
                 return srt_output
+
     return (TtmlParser,)
 
 

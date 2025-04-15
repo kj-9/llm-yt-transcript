@@ -15,6 +15,9 @@ dependencies = [
 dev = [
     "marimo>=0.12.8",
 ]
+test = [
+    "pytest>=8.3.5",
+]
 
 [build-system]
 requires = ["setuptools"]
