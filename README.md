@@ -1,11 +1,16 @@
 # llm-yt-transcript
 
+[![PyPI](https://img.shields.io/pypi/v/llm-yt-transcript.svg)](https://pypi.org/project/llm-yt-transcript/)
+[![Changelog](https://img.shields.io/github/v/release/kj-9/llm-yt-transcript?include_prereleases&label=changelog)](https://github.com/kj-9/llm-yt-transcript/releases)
+[![Tests](https://github.com/kj-9/llm-yt-transcript/actions/workflows/test.yml/badge.svg)](https://github.com/kj-9/llm-yt-transcript/actions/workflows/test.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kj-9/llm-yt-transcript/blob/main/LICENSE)
+
 `llm-yt-transcript` is a LLM plugin for YouTube transcripts as fragments. It leverages `yt-dlp` for downloading subtitles.
 
 ## Installation
 
 ```
-llm install git+https://github.com/kj-9/llm-yt-transcript.git
+llm install llm-yt-transcript
 ```
 
 
