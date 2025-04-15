@@ -29,3 +29,6 @@ CI = "https://github.com/kj-9/llm-yt-transcript/actions"
 [project.entry-points.llm]
 yt_transcript = "llm_yt_transcript"
 
+[tool.setuptools]
+# see https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#py-modules
+py-modules = ["llm_yt_transcript"]
