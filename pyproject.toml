@@ -29,8 +29,3 @@ CI = "https://github.com/kj-9/llm-yt-transcript/actions"
 [project.entry-points.llm]
 yt_transcript = "llm_yt_transcript"
 
-
-# see src dir
-[tool.setuptools.packages.find]
-where = ["src"]
-
