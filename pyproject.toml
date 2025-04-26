@@ -1,6 +1,6 @@
 [project]
 name = "llm-yt-transcript"
-version = "0.1.0a"
+version = "0.1.0a1"
 description = "A LLM plugin for YouTube transcripts as fragments"
 readme = "README.md"
 authors = [{name = "kj-9"}]
