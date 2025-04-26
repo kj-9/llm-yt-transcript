@@ -29,6 +29,23 @@ For example, to download Spanish subtitles, use:
 llm fragments show ytt:es:{youtube_video_url}
 ```
 
+### Controlling Logging
+
+By default, `llm-yt-transcript` does not suppress logs from the `yt-dlp` library. You can control the logging behavior by setting the `LLM_YT_LOG` environment variable. For example:
+
+```bash
+export LLM_YT_LOG=verbose
+```
+
+Supported log modes are:
+- `verbose`: Adds the `--verbose` argument to the `yt-dlp` command for detailed output.
+- `quiet`: Adds the `--quiet` argument to suppress most output.
+- `default`: No additional arguments are passed, using the default logging behavior of `yt-dlp`.
+
+The default mode is `default`.
+
+For more details on `yt-dlp` arguments, refer to the [yt-dlp documentation](https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#verbosity-and-simulation-options).
+
 
 ## Development
 

@@ -4,8 +4,26 @@ import tempfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
+import os
 
 import llm
+
+
+def get_log_args() -> list[str]:
+    """
+    Get log arguments for yt-dlp
+    """
+    log_mode = os.getenv("LLM_YT_LOG", default="default")
+
+    match log_mode.lower():
+        case "verbose":
+            return ["--verbose"]
+        case "quiet":
+            return ["--quiet"]
+        case "default":
+            return []
+        case _:
+            raise ValueError(f"Unknown log mode: {log_mode}")
 
 
 def download_subtitles(url, path, sub_format, sub_lang) -> Path:
@@ -27,7 +45,7 @@ def download_subtitles(url, path, sub_format, sub_lang) -> Path:
         "--output",
         "transcript.%(ext)s",
         url,
-    ]
+    ] + get_log_args()
 
     # コマンドを実行
     subprocess.run(command, check=True)
@@ -47,7 +65,7 @@ def list_subtitles(url):
     https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#subtitle-options
     """
     # yt-dlpのコマンドを構築
-    command = ["yt-dlp", "--skip-download", "--list-subs", url]
+    command = ["yt-dlp", "--skip-download", "--list-subs", url] + get_log_args()
 
     # コマンドを実行
     subprocess.run(command, check=True)
