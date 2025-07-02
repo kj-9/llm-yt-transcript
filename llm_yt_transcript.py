@@ -39,27 +39,18 @@ def download_subtitles(url, path, sub_format, sub_lang) -> Path:
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-    except yt_dlp.DownloadError as e:
-        error_msg = str(e)
-        
-        if any(keyword in error_msg.lower() for keyword in [
-            "nsig extraction failed", 
-            "did not get any data blocks",
-            "falling back to generic n function",
-            "some formats may be missing"
-        ]):
-            raise RuntimeError(
-                f"yt-dlp failed to extract YouTube content due to YouTube's anti-bot measures.\n"
-                f"This is usually fixed by updating yt-dlp to the latest version.\n\n"
-                f"To fix this issue, run one of these commands:\n"
-                f"  • Recommended: llm install -U llm-yt-transcript\n"
-                f"  • If using pip: pip install --upgrade yt-dlp\n"
-                f"  • If using uv: uv pip install --upgrade yt-dlp\n"
-                f"  • If using pipx: pipx upgrade yt-dlp\n\n"
-                f"Original error: {e}"
-            ) from e
-        else:
-            raise
+    except yt_dlp.utils.DownloadError as e:
+        raise RuntimeError(
+            f"yt-dlp failed to download content.\n"
+            f"This could be due to missing subtitles, anti-bot measures, or other issues.\n"
+            f"Try updating yt-dlp to the latest version first.\n\n"
+            f"To update yt-dlp, run one of these commands:\n"
+            f"  • Recommended: llm install -U llm-yt-transcript\n"
+            f"  • If using pip: pip install --upgrade yt-dlp\n"
+            f"  • If using uv: uv pip install --upgrade yt-dlp\n"
+            f"  • If using pipx: pipx upgrade yt-dlp\n\n"
+            f"Original error: {e}"
+        ) from e
 
     out = Path(path) / f"transcript.{sub_lang}.{sub_format}"
 
