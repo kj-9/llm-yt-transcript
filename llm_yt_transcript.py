@@ -1,5 +1,4 @@
 import re
-import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -7,54 +6,43 @@ from pathlib import Path
 import os
 
 import llm
+import yt_dlp
 
 
-def get_log_args() -> list[str]:
+def get_log_level() -> str:
     """
-    Get log arguments for yt-dlp
+    Get log level for yt-dlp API
     """
-    log_mode = os.getenv("LLM_YT_LOG", default="default")
+    log_mode = os.getenv("LLM_YT_LOG", default="warning")
 
-    match log_mode.lower():
-        case "verbose":
-            return ["--verbose"]
-        case "quiet":
-            return ["--quiet"]
-        case "default":
-            return []
-        case _:
-            raise ValueError(f"Unknown log mode: {log_mode}")
+    valid_levels = ["debug", "info", "warning", "error", "critical"]
+    
+    if log_mode.lower() in valid_levels:
+        return log_mode.lower()
+    else:
+        raise ValueError(f"Unknown log mode: {log_mode}. Valid options: {', '.join(valid_levels)}")
 
 
 def download_subtitles(url, path, sub_format, sub_lang) -> Path:
     """
     https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#subtitle-options
     """
-    # yt-dlpのコマンドを構築
-    command = [
-        "yt-dlp",
-        "--skip-download",
-        "--write-subs",
-        "--write-auto-subs",
-        "--sub-lang",
-        sub_lang,
-        "--sub-format",
-        sub_format,  # 'ass/srt/ttml'
-        "--path",
-        path,
-        "--output",
-        "transcript.%(ext)s",
-        url,
-    ] + get_log_args()
+    ydl_opts = {
+        'skip_download': True,
+        'writesubtitles': True,
+        'writeautomaticsub': True,
+        'subtitleslangs': [sub_lang],
+        'subtitlesformat': sub_format,
+        'outtmpl': f'{path}/transcript.%(ext)s',
+    }
 
-    # コマンドを実行
     try:
-        subprocess.run(command, check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as e:
-        # Check if the error is related to YouTube's anti-bot measures
-        error_output = e.stderr + e.stdout if e.stderr and e.stdout else (e.stderr or e.stdout or "")
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+    except yt_dlp.DownloadError as e:
+        error_msg = str(e)
         
-        if any(keyword in error_output.lower() for keyword in [
+        if any(keyword in error_msg.lower() for keyword in [
             "nsig extraction failed", 
             "did not get any data blocks",
             "falling back to generic n function",
@@ -68,16 +56,12 @@ def download_subtitles(url, path, sub_format, sub_lang) -> Path:
                 f"  • If using pip: pip install --upgrade yt-dlp\n"
                 f"  • If using uv: uv pip install --upgrade yt-dlp\n"
                 f"  • If using pipx: pipx upgrade yt-dlp\n\n"
-                f"Original error: {e}\n"
-                f"Command: {' '.join(command)}"
+                f"Original error: {e}"
             ) from e
         else:
-            # Re-raise the original error if it's not the known issue
             raise
 
-    out = (
-        Path(path) / f"transcript.{sub_lang}.{sub_format}"
-    )  # i cannot change this format template...
+    out = Path(path) / f"transcript.{sub_lang}.{sub_format}"
 
     if not out.exists():
         raise NameError(f"no such file: {out}")
@@ -89,11 +73,13 @@ def list_subtitles(url):
     """
     https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#subtitle-options
     """
-    # yt-dlpのコマンドを構築
-    command = ["yt-dlp", "--skip-download", "--list-subs", url] + get_log_args()
+    ydl_opts = {
+        'skip_download': True,
+        'listsubtitles': True,
+    }
 
-    # コマンドを実行
-    subprocess.run(command, check=True)
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
 
 
 @dataclass

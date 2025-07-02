@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import llm
 
-from llm_yt_transcript import yt_transcript_loader, get_log_args
+from llm_yt_transcript import yt_transcript_loader, get_log_level
 
 
 def test_yt_transcript_loader():
@@ -31,18 +31,24 @@ def test_yt_transcript_loader():
         assert str(fragment[0]) == "This is a test subtitle."
 
 
-def test_get_log_args():
-    with patch("os.getenv", return_value="verbose"):
-        assert get_log_args() == ["--verbose"]
+def test_get_log_level():
+    with patch("os.getenv", return_value="debug"):
+        assert get_log_level() == "debug"
 
-    with patch("os.getenv", return_value="quiet"):
-        assert get_log_args() == ["--quiet"]
+    with patch("os.getenv", return_value="info"):
+        assert get_log_level() == "info"
 
-    with patch("os.getenv", return_value="default"):
-        assert get_log_args() == []
+    with patch("os.getenv", return_value="warning"):
+        assert get_log_level() == "warning"
+
+    with patch("os.getenv", return_value="error"):
+        assert get_log_level() == "error"
+
+    with patch("os.getenv", return_value="critical"):
+        assert get_log_level() == "critical"
 
     with patch("os.getenv", return_value="unknown"):
         try:
-            get_log_args()
+            get_log_level()
         except ValueError as e:
-            assert str(e) == "Unknown log mode: unknown"
+            assert str(e) == "Unknown log mode: unknown. Valid options: debug, info, warning, error, critical"
