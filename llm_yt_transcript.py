@@ -48,7 +48,32 @@ def download_subtitles(url, path, sub_format, sub_lang) -> Path:
     ] + get_log_args()
 
     # コマンドを実行
-    subprocess.run(command, check=True)
+    try:
+        subprocess.run(command, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        # Check if the error is related to YouTube's anti-bot measures
+        error_output = e.stderr + e.stdout if e.stderr and e.stdout else (e.stderr or e.stdout or "")
+        
+        if any(keyword in error_output.lower() for keyword in [
+            "nsig extraction failed", 
+            "did not get any data blocks",
+            "falling back to generic n function",
+            "some formats may be missing"
+        ]):
+            raise RuntimeError(
+                f"yt-dlp failed to extract YouTube content due to YouTube's anti-bot measures.\n"
+                f"This is usually fixed by updating yt-dlp to the latest version.\n\n"
+                f"To fix this issue, run one of these commands:\n"
+                f"  • Recommended: llm install -U llm-yt-transcript\n"
+                f"  • If using pip: pip install --upgrade yt-dlp\n"
+                f"  • If using uv: uv pip install --upgrade yt-dlp\n"
+                f"  • If using pipx: pipx upgrade yt-dlp\n\n"
+                f"Original error: {e}\n"
+                f"Command: {' '.join(command)}"
+            ) from e
+        else:
+            # Re-raise the original error if it's not the known issue
+            raise
 
     out = (
         Path(path) / f"transcript.{sub_lang}.{sub_format}"
